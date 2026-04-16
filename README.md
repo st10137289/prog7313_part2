@@ -214,3 +214,159 @@ This implementation provides:
 
 ## Reference:
 In the classes that used
+
+
+---
+
+
+
+# PROG7313 POE – Part 2 (Authentication)
+
+---
+
+## Author
+Raghav Mahraj
+
+---
+
+## Overview
+
+This part of the project focuses on implementing the **authentication system** for the BudgetQuest application.
+
+The goal is to allow users to securely log into the app using a username and password, maintain their session, and provide a clean transition into the rest of the system.
+
+The authentication system integrates with the existing **RoomDB database structure** and ensures that only valid users can access the application.
+
+---
+
+## Authentication Implementation
+
+### Login System
+
+The login system allows users to enter their credentials and validates them before granting access.
+
+**Features implemented:**
+- Username and password input fields
+- Input validation (empty fields handling)
+- Authentication using RoomDB (`UserDao`)
+- Error message display for invalid input
+- Navigation to the next screen after successful login
+
+---
+
+### Session Management
+
+A session system was implemented using **SharedPreferences** to maintain login state.
+
+**Stored data:**
+- Login status
+- User ID
+- Username
+
+**Functionality:**
+- Keeps user logged in after app restart
+- Determines initial screen on app launch
+- Clears session on logout
+
+---
+
+### Demo Users
+
+To simplify testing, users are automatically seeded into the database.
+
+| Username | Password |
+|----------|---------|
+| admin    | 1234    |
+| user1    | budget1 |
+
+---
+
+### Welcome Screen
+
+After successful login, users are taken to a confirmation screen.
+
+**Features:**
+- Displays application name (**BudgetQuest**)
+- Shows logged-in username
+- Provides a logout button
+- Acts as a transition point for further development
+
+---
+
+## User Interface Design
+
+The UI was built using **Jetpack Compose** and follows a clean, card-based layout.
+
+**Design considerations:**
+- Centralised layout for readability
+- Consistent spacing and alignment
+- Clear input fields and buttons
+- Simple branding using the **BudgetQuest** name and icon
+
+Tagline used:
+> Track smarter. Spend better.
+
+---
+
+## Testing
+
+Basic unit testing was implemented for the authentication validation logic.
+
+**Test cases**
+
+- Empty username and password
+- Empty username
+- Empty password
+- Valid input
+
+All tests pass successfully.
+
+---
+
+## References
+
+- Android Developers. (n.d.). Build a UI with Jetpack Compose.
+Available at: https://developer.android.com/compose
+[Accessed: 15 April 2026].
+
+- Android Developers. (n.d.). Improve app architecture.
+Available at: https://developer.android.com/topic/architecture
+[Accessed: 15 April 2026].
+
+- Android Developers. (n.d.). Save key-value data.
+Available at: https://developer.android.com/training/data-storage/shared-preferences
+[Accessed: 15 April 2026].
+
+- Android Developers. (n.d.). Accessing data using Room.
+Available at: https://developer.android.com/training/data-storage/room/accessing-data
+[Accessed: 15 April 2026].
+
+- Android Developers. (n.d.). Testing in Jetpack Compose.
+Available at: https://developer.android.com/jetpack/compose/testing
+[Accessed: 15 April 2026].
+
+- Nielsen, J. (1994). 10 usability heuristics for user interface design.
+Available at: https://www.nngroup.com/articles/ten-usability-heuristics/
+[Accessed: 15 April 2026].
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
