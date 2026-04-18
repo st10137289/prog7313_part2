@@ -349,6 +349,161 @@ Available at: https://developer.android.com/jetpack/compose/testing
 Available at: https://www.nngroup.com/articles/ten-usability-heuristics/
 [Accessed: 15 April 2026].
 
+---
+
+# PROG7313 POE – Part 2 (Expense Entry & Category UI)
+
+---
+
+## Author
+Ophec Funis (ST10089492)
+
+---
+
+## Overview
+
+This section covers the expense entry feature and category management UI for BudgetQuest.
+
+The database layer was already set up by Member 2, so this part focuses on building the screens and view models that sit on top of it.
+
+I also added the registration screen and cleaned up the login UI since those were needed to properly test the flow.
+
+---
+
+## Screens Built
+
+### HomeScreen
+The screen users land on after logging in.
+
+Has three buttons:
+- Add Expense: goes to the expense form
+- Add Category: goes to the category form
+- Sign Out: clears session and returns to login
+
+---
+
+### AddCategoryScreen
+
+Simple form for creating a new spending category.
+
+Fields:
+- Category name (text input)
+
+Validation:
+- Blocks empty names
+- Blocks duplicate category names (checks the database before saving)
+
+On save:
+- Inserts into `Category` table via `CategoryDao`
+- Navigates back automatically
+
+---
+
+### AddExpenseScreen
+
+The main feature of this section. A scrollable form that collects all the required expense info.
+
+Fields:
+- Amount (R): decimal keyboard, must be greater than 0
+- Date: opens a `DatePickerDialog`, stores as YYYY-MM-DD
+- Start time: opens a `TimePickerDialog`, stores as HH:mm
+- End time: same as above
+- Description: plain text
+- Category: dropdown populated from the database for that user
+
+Validation (6 checks):
+1. Amount must be a valid number greater than 0
+2. Date must be picked
+3. Start time must be picked
+4. End time must be picked
+5. End time must be after start time
+6. Description cannot be blank
+7. A category must be selected
+
+Errors show inline so the user knows exactly what to fix.
+
+On save:
+- Inserts into `Expense` table via `ExpenseDao`
+- `imageUrl` is saved as null: photo upload is for another member to handle
+- Navigates back after successful save
+
+---
+
+### RegisterScreen
+
+Added because there was no way to create a new user without it.
+
+Features:
+- Username and password fields
+- Checks username isn't already taken
+- Requires password to be at least 4 characters
+- Logs the user in automatically after registering
+- Removed the hardcoded demo users from the auth flow
+
+---
+
+## ViewModels
+
+### AddCategoryViewModel
+- Extends `AndroidViewModel` so it can access the database
+- Holds form state (name, errorMessage, isSaved)
+- `save()` runs the duplicate check then inserts
+- `resetAll()` clears everything when the screen opens: stops old data showing up on revisit
+
+### AddExpenseViewModel
+- Loads the category list from the database when the screen opens
+- Holds state for all 6 form fields plus the selected category
+- `save()` runs all validation then inserts the expense
+- Same `resetAll()` pattern as above
+
+---
+
+## Theme
+
+Applied the BudgetQuest colour scheme across all screens.
+
+- Primary: green
+- Background: white / light grey
+- Configured in `Color.kt` and `Theme.kt`
+- Dynamic colour is disabled so the theme stays consistent across devices
+
+---
+
+## Notes for Other Members
+
+Member 4 (photo + goals):
+- `imageUrl` field already exists on the `Expense` entity: just needs to be populated
+- `Goal` entity and `GoalDao` are ready: `SetGoalScreen.kt` has the UI skeleton, just needs the save logic wired up
+
+Member 5 (list + reports):
+- `getExpensesByPeriod(userId, startDate, endDate)` is in `ExpenseDao`: ready to use
+- `getTotalForCategoryByPeriod(...)` is also in `ExpenseDao`
+- `ExpenseListScreen.kt` and `CategoryTotalsScreen.kt` have the screen skeletons waiting
+
+---
+
+## References
+
+- Android Developers. (n.d.). Build a UI with Jetpack Compose.
+Available at: https://developer.android.com/compose
+[Accessed: 16 April 2026].
+
+- Android Developers. (n.d.). DatePickerDialog.
+Available at: https://developer.android.com/reference/android/app/DatePickerDialog
+[Accessed: 16 April 2026].
+
+- Android Developers. (n.d.). ViewModel overview.
+Available at: https://developer.android.com/topic/libraries/architecture/viewmodel
+[Accessed: 16 April 2026].
+
+- Android Developers. (n.d.). Accessing data using Room.
+Available at: https://developer.android.com/training/data-storage/room/accessing-data
+[Accessed: 16 April 2026].
+
+- Nielsen, J. (1994). 10 usability heuristics for user interface design.
+Available at: https://www.nngroup.com/articles/ten-usability-heuristics/
+[Accessed: 16 April 2026].
+
 
 
 
