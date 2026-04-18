@@ -1,16 +1,11 @@
 package com.programming3c.prog7313part2.auth
 
-// Author: Raghav Mahraj
-// Module: PROG7313 – POE Part 2
-//
+// Author: ST10089492 Ophec Funis
+
 // References:
-// Android Developers. (n.d.). Build a UI with Jetpack Compose.
-// Available at: https://developer.android.com/compose
-// [Accessed: 15 April 2026].
-//
-// Nielsen, J. (1994). 10 usability heuristics for user interface design.
-// Available at: https://www.nngroup.com/articles/ten-usability-heuristics/
-// [Accessed: 15 April 2026].
+// Android Developers. (n.d.). Build a UI with Jetpack Compose.Available at: https://developer.android.com/compose[Accessed: 16 April 2026].
+
+// Nielsen, J. (1994). 10 usability heuristics for user interface design.Available at: https://www.nngroup.com/articles/ten-usability-heuristics/[Accessed: 16 April 2026].
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -34,20 +29,20 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun LoginScreen(
+fun RegisterScreen(
     errorMessage: String?,
-    onLoginClick: (String, String) -> Unit,
-    onRegisterClick: () -> Unit
+    onRegisterClick: (String, String, String) -> Unit,
+    onBackClick: () -> Unit
 ) {
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    var confirmPassword by remember { mutableStateOf("") }
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -59,17 +54,10 @@ fun LoginScreen(
                 .padding(horizontal = 28.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.weight(1.2f))
+            Spacer(modifier = Modifier.weight(1f))
 
             Text(
-                text = "↗",
-                style = MaterialTheme.typography.displaySmall
-            )
-
-            Spacer(modifier = Modifier.height(10.dp))
-
-            Text(
-                text = "BudgetQuest",
+                text = "Create Account",
                 style = MaterialTheme.typography.headlineLarge,
                 fontWeight = FontWeight.Bold
             )
@@ -77,12 +65,12 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(6.dp))
 
             Text(
-                text = "Track smarter. Spend better.",
+                text = "Start your budgeting journey",
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
-            Spacer(modifier = Modifier.weight(1f))
+            Spacer(modifier = Modifier.height(36.dp))
 
             OutlinedTextField(
                 value = username,
@@ -91,9 +79,7 @@ fun LoginScreen(
                 singleLine = true,
                 isError = errorMessage != null && username.isBlank(),
                 shape = RoundedCornerShape(12.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .testTag("usernameField")
+                modifier = Modifier.fillMaxWidth()
             )
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -107,9 +93,21 @@ fun LoginScreen(
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                 isError = errorMessage != null && password.isBlank(),
                 shape = RoundedCornerShape(12.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .testTag("passwordField")
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            OutlinedTextField(
+                value = confirmPassword,
+                onValueChange = { confirmPassword = it },
+                label = { Text("Confirm password") },
+                singleLine = true,
+                visualTransformation = PasswordVisualTransformation(),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                isError = errorMessage != null && confirmPassword != password,
+                shape = RoundedCornerShape(12.dp),
+                modifier = Modifier.fillMaxWidth()
             )
 
             if (!errorMessage.isNullOrBlank()) {
@@ -118,38 +116,41 @@ fun LoginScreen(
                     text = errorMessage,
                     color = MaterialTheme.colorScheme.error,
                     style = MaterialTheme.typography.bodySmall,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .testTag("errorMessage")
+                    modifier = Modifier.fillMaxWidth()
                 )
             }
 
             Spacer(modifier = Modifier.height(24.dp))
 
             Button(
-                onClick = { onLoginClick(username.trim(), password.trim()) },
+                onClick = {
+                    onRegisterClick(
+                        username.trim(),
+                        password.trim(),
+                        confirmPassword.trim()
+                    )
+                },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(52.dp)
-                    .testTag("signInButton"),
+                    .height(52.dp),
                 shape = RoundedCornerShape(14.dp)
             ) {
                 Text(
-                    text = "Sign In",
+                    text = "Register",
                     style = MaterialTheme.typography.titleSmall
                 )
             }
 
-            Spacer(modifier = Modifier.weight(0.8f))
+            Spacer(modifier = Modifier.weight(1f))
 
             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
 
             TextButton(
-                onClick = onRegisterClick,
+                onClick = onBackClick,
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    text = "Create an account",
+                    text = "Back to Sign In",
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }

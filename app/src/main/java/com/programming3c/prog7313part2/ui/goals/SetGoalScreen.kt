@@ -1,16 +1,11 @@
-package com.programming3c.prog7313part2.auth
+package com.programming3c.prog7313part2.ui.goals
 
-// Author: Raghav Mahraj
-// Module: PROG7313 – POE Part 2
-//
+// Next section of work for goals Made a few classes to help - Ophec
+// Section: Goals
+
 // References:
-// Android Developers. (n.d.). Build a UI with Jetpack Compose.
-// Available at: https://developer.android.com/compose
-// [Accessed: 15 April 2026].
-//
-// Nielsen, J. (1994). 10 usability heuristics for user interface design.
-// Available at: https://www.nngroup.com/articles/ten-usability-heuristics/
-// [Accessed: 15 April 2026].
+// Android Developers. (n.d.). Build a UI with Jetpack Compose.Available at: https://developer.android.com/compose[Accessed: April 2026].
+
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -34,20 +29,22 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import java.util.Calendar
 
 @Composable
-fun LoginScreen(
-    errorMessage: String?,
-    onLoginClick: (String, String) -> Unit,
-    onRegisterClick: () -> Unit
+fun SetGoalScreen(
+    userId: Int,
+    onBack: () -> Unit
 ) {
-    var username by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
+    val currentMonth = Calendar.getInstance().get(Calendar.MONTH) + 1
+    val currentYear = Calendar.getInstance().get(Calendar.YEAR)
+
+    var minGoal by remember { mutableStateOf("") }
+    var maxGoal by remember { mutableStateOf("") }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -59,97 +56,94 @@ fun LoginScreen(
                 .padding(horizontal = 28.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.weight(1.2f))
+            Spacer(modifier = Modifier.weight(1f))
 
             Text(
-                text = "↗",
-                style = MaterialTheme.typography.displaySmall
-            )
-
-            Spacer(modifier = Modifier.height(10.dp))
-
-            Text(
-                text = "BudgetQuest",
-                style = MaterialTheme.typography.headlineLarge,
-                fontWeight = FontWeight.Bold
+                text = "Monthly Goals",
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.SemiBold
             )
 
             Spacer(modifier = Modifier.height(6.dp))
 
             Text(
-                text = "Track smarter. Spend better.",
-                style = MaterialTheme.typography.bodyLarge,
+                text = "%02d / %d".format(currentMonth, currentYear),
+                style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
-            Spacer(modifier = Modifier.weight(1f))
+            Spacer(modifier = Modifier.height(32.dp))
 
             OutlinedTextField(
-                value = username,
-                onValueChange = { username = it },
-                label = { Text("Username") },
+                value = minGoal,
+                onValueChange = { minGoal = it; errorMessage = null },
+                label = { Text("Minimum spend (R)") },
                 singleLine = true,
-                isError = errorMessage != null && username.isBlank(),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                isError = errorMessage != null && minGoal.isBlank(),
                 shape = RoundedCornerShape(12.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .testTag("usernameField")
+                modifier = Modifier.fillMaxWidth()
             )
 
             Spacer(modifier = Modifier.height(12.dp))
 
             OutlinedTextField(
-                value = password,
-                onValueChange = { password = it },
-                label = { Text("Password") },
+                value = maxGoal,
+                onValueChange = { maxGoal = it; errorMessage = null },
+                label = { Text("Maximum spend (R)") },
                 singleLine = true,
-                visualTransformation = PasswordVisualTransformation(),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                isError = errorMessage != null && password.isBlank(),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                isError = errorMessage != null && maxGoal.isBlank(),
                 shape = RoundedCornerShape(12.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .testTag("passwordField")
+                modifier = Modifier.fillMaxWidth()
             )
 
-            if (!errorMessage.isNullOrBlank()) {
+            if (errorMessage != null) {
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = errorMessage,
+                    text = errorMessage!!,
                     color = MaterialTheme.colorScheme.error,
                     style = MaterialTheme.typography.bodySmall,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .testTag("errorMessage")
+                    modifier = Modifier.fillMaxWidth()
                 )
             }
 
             Spacer(modifier = Modifier.height(24.dp))
 
+            // TODO: replace with ViewModel save — use GoalDao.insertGoal / updateGoal
+            // Goal entity fields: userId, month, year, minMonthGoal, maxMonthGoal
             Button(
-                onClick = { onLoginClick(username.trim(), password.trim()) },
+                onClick = {
+                    val min = minGoal.trim().toDoubleOrNull()
+                    val max = maxGoal.trim().toDoubleOrNull()
+                    when {
+                        min == null || min < 0 -> errorMessage = "Enter a valid minimum"
+                        max == null || max <= 0 -> errorMessage = "Enter a valid maximum"
+                        max <= min -> errorMessage = "Maximum must be greater than minimum"
+                        else -> { /* save goal here */ }
+                    }
+                },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(52.dp)
-                    .testTag("signInButton"),
+                    .height(52.dp),
                 shape = RoundedCornerShape(14.dp)
             ) {
                 Text(
-                    text = "Sign In",
+                    text = "Save Goal",
                     style = MaterialTheme.typography.titleSmall
                 )
             }
 
-            Spacer(modifier = Modifier.weight(0.8f))
+            Spacer(modifier = Modifier.weight(1f))
 
             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
 
             TextButton(
-                onClick = onRegisterClick,
+                onClick = onBack,
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    text = "Create an account",
+                    text = "Back",
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
