@@ -1,18 +1,9 @@
 package com.programming3c.prog7313part2.ui.expense
 
-// Author: ST10089492 Ophec Funis
-// Section: Expense Entry
-
-// References:
-// Android Developers. (n.d.). Build a UI with Jetpack Compose.Available at: https://developer.android.com/compose[Accessed: 16 April 2026].
-
-// Android Developers. (n.d.). DatePickerDialog.Available at: https://developer.android.com/reference/android/app/DatePickerDialog[Accessed: 16 April 2026].
-
-// Nielsen, J. (1994). 10 usability heuristics for user interface design.Available at: https://www.nngroup.com/articles/ten-usability-heuristics/
-// Available at: https://www.nngroup.com/articles/ten-usability-heuristics/[Accessed: 16 April 2026].
-
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -28,9 +19,9 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
-import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
@@ -63,11 +54,16 @@ fun AddExpenseScreen(
     val viewModel: AddExpenseViewModel = viewModel()
     val context = LocalContext.current
 
+    val imagePickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri ->
+        viewModel.updateImageUrl(uri?.toString())
+    }
+
     LaunchedEffect(userId) {
         viewModel.loadCategories(userId)
     }
 
-    // resetAll runs first then clears any state left from a previous visit before we start watching
     LaunchedEffect(Unit) {
         viewModel.resetAll()
         snapshotFlow { viewModel.isSaved }
@@ -133,7 +129,6 @@ fun AddExpenseScreen(
 
             Spacer(modifier = Modifier.height(28.dp))
 
-            // amount is an important field larger text makes it stand out
             OutlinedTextField(
                 value = viewModel.amount,
                 onValueChange = {
@@ -147,14 +142,14 @@ fun AddExpenseScreen(
                     fontWeight = FontWeight.Medium
                 ),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                isError = viewModel.errorMessage != null && viewModel.amount.trim().toDoubleOrNull().let { it == null || it <= 0 },
+                isError = viewModel.errorMessage != null &&
+                        viewModel.amount.trim().toDoubleOrNull().let { it == null || it <= 0 },
                 shape = RoundedCornerShape(12.dp),
                 modifier = Modifier.fillMaxWidth()
             )
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // "When" section (date and times grouped together)
             SectionLabel(text = "When")
 
             Spacer(modifier = Modifier.height(10.dp))
@@ -201,7 +196,6 @@ fun AddExpenseScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // "Details" section (description and category grouped together)
             SectionLabel(text = "Details")
 
             Spacer(modifier = Modifier.height(10.dp))
@@ -246,7 +240,6 @@ fun AddExpenseScreen(
                     onDismissRequest = { categoryDropdownExpanded = false }
                 ) {
                     if (viewModel.categories.isEmpty()) {
-                        // Suggests to the user to add a category first
                         DropdownMenuItem(
                             text = { Text("No categories yet — add one first") },
                             onClick = { categoryDropdownExpanded = false }
@@ -264,6 +257,37 @@ fun AddExpenseScreen(
                     }
                 }
             }
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            SectionLabel(text = "Receipt")
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            OutlinedButton(
+                onClick = { imagePickerLauncher.launch("image/*") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(52.dp),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Text(
+                    text = if (viewModel.imageUrl == null) "Add Receipt Photo" else "Change Receipt Photo"
+                )
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(
+                text = if (viewModel.imageUrl == null) {
+                    "No photo selected"
+                } else {
+                    "Photo selected successfully"
+                },
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.fillMaxWidth()
+            )
 
             if (viewModel.errorMessage != null) {
                 Spacer(modifier = Modifier.height(10.dp))
@@ -311,7 +335,6 @@ fun AddExpenseScreen(
     }
 }
 
-// small section label to group related fields
 @Composable
 private fun SectionLabel(text: String) {
     Text(

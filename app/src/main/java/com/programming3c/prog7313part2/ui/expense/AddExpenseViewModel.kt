@@ -1,11 +1,5 @@
 package com.programming3c.prog7313part2.ui.expense
 
-// Author: ST10089492 Ophec Funis
-// Section: Expense Entry
-
-// References:
-// Android Developers. (n.d.). ViewModel overview.Available at: https://developer.android.com/topic/libraries/architecture/viewmodel[Accessed: 16 April 2026].
-
 import android.app.Application
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -31,6 +25,7 @@ class AddExpenseViewModel(app: Application) : AndroidViewModel(app) {
     var selectedCategoryId by mutableStateOf(-1)
     var selectedCategoryName by mutableStateOf("Select a category")
     var categories by mutableStateOf<List<Category>>(emptyList())
+    var imageUrl by mutableStateOf<String?>(null)
     var errorMessage by mutableStateOf<String?>(null)
     var isSaved by mutableStateOf(false)
 
@@ -46,8 +41,13 @@ class AddExpenseViewModel(app: Application) : AndroidViewModel(app) {
         errorMessage = null
     }
 
+    fun updateImageUrl(url: String?) {
+        imageUrl = url
+        errorMessage = null
+    }
+
+
     fun save(userId: Int) {
-        // validate every field before touching the db
         val amountVal = amount.trim().toDoubleOrNull()
 
         when {
@@ -67,7 +67,6 @@ class AddExpenseViewModel(app: Application) : AndroidViewModel(app) {
                 errorMessage = "Pick an end time"
                 return
             }
-            // HH:mm strings compare correctly as plain strings when zero-padded
             endTime <= startTime -> {
                 errorMessage = "End time must be after start time"
                 return
@@ -87,12 +86,12 @@ class AddExpenseViewModel(app: Application) : AndroidViewModel(app) {
                 Expense(
                     userId = userId,
                     categoryId = selectedCategoryId,
-                    amount = amountVal!!,
+                    amount = amountVal,
                     description = description.trim(),
                     date = date,
                     startTime = startTime,
                     endTime = endTime,
-                    imageUrl = null  // Not sure who yet but Image uploader/media should handle photo upload
+                    imageUrl = imageUrl
                 )
             )
             isSaved = true
@@ -103,7 +102,6 @@ class AddExpenseViewModel(app: Application) : AndroidViewModel(app) {
         errorMessage = null
     }
 
-    // called on every screen entry to wipe any state left over from the previous visit
     fun resetAll() {
         amount = ""
         date = ""
@@ -112,6 +110,7 @@ class AddExpenseViewModel(app: Application) : AndroidViewModel(app) {
         description = ""
         selectedCategoryId = -1
         selectedCategoryName = "Select a category"
+        imageUrl = null
         errorMessage = null
         isSaved = false
     }
