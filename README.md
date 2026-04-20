@@ -504,8 +504,163 @@ Available at: https://developer.android.com/training/data-storage/room/accessing
 Available at: https://www.nngroup.com/articles/ten-usability-heuristics/
 [Accessed: 16 April 2026].
 
+---
+# PROG7313 POE – Part 2 (Media + Goals)
+
+---
+
+## Author  
+Shahaan Pillay (ST10438099)
+
+---
+
+## Overview  
+
+This section covers the media functionality (photo upload) and the monthly goal tracking system for BudgetQuest.
+The database layer and expense entry system were already set up by previous members, so this part focuses on extending that functionality by adding image support and implementing goal-based spending logic.
+The aim is to improve user interaction by allowing users to attach receipts to expenses and track their spending against monthly targets.
+
+---
+
+## Features Implemented  
+
+### Media uploads
+
+Users can attach a receipt image when creating an expense.
+
+**Functionality:**
+- Opens device gallery to select an image  
+- Converts selected image to URI string  
+- Stores URI in the `imageUrl` field  
+- Saves image reference with the expense  
+
+**On save:**
+- Image is included when inserting into the `Expense` table via `ExpenseDao`  
+
+---
+
+### Monthly Goals  
+
+Users can define spending targets for each month.
+
+**Fields:**
+- Minimum monthly goal  
+- Maximum monthly goal  
+
+**Validation:**
+- Minimum must be ≥ 0  
+- Maximum must be greater than 0  
+- Maximum must be greater than minimum  
+
+---
+## Screens Built  
+
+### SetGoalScreen  
+
+Screen used to manage monthly goals.
+
+**Features:**
+- Displays current month and year  
+- Loads existing goal if available  
+- Allows creating or updating goals  
+- Displays total spending for the month  
+- Displays spending status
+
+---
+
+## Goal Logic  
+
+The system compares total monthly spending against the user’s goals.
+
+**Spending conditions:**
+- Below goal → spending is less than minimum  
+- On track → spending is between minimum and maximum  
+- Overspending → spending exceeds maximum  
+
+**How it works:**
+- Uses `getTotalSpentByPeriod(userId, startDate, endDate)` from `ExpenseDao`  
+- Retrieves goal using `getGoalForMonth(userId, month, year)` from `GoalDao`  
+- Calculates and displays result in real time  
+
+---
 
 
+## Notes for Other Members  
+
+- `imageUrl` is now populated and can be used in list/report screens  
+- Goals are stored per user, month, and year  
+- `getTotalSpentByPeriod(...)` is used for all calculations  
+
+---
+
+## Validation  
+
+The following validation checks were implemented to ensure correct user input:
+
+- Minimum goal must be greater than or equal to 0  
+- Maximum goal must be greater than 0  
+- Maximum goal must be greater than the minimum goal  
+- Image selection is optional but handled safely 
+
+Errors are displayed clearly to guide the user when invalid input is entered.
+
+---
+
+## Testing  
+
+The following tests were performed to verify functionality:
+
+### Media 
+- Selected image from gallery successfully  
+- Verified no crashes when selecting an image  
+- Confirmed image URI is saved with the expense  
+- Confirmed expense saves correctly with and without an image  
+
+### Goals
+- Tested empty input → validation errors displayed  
+- Tested invalid ranges (min > max) → error shown  
+- Tested valid input → goal saved successfully  
+- Reopened screen → goal values persisted correctly  
+- Verified total monthly spending is calculated  
+- Verified status updates correctly (Below / On track / Overspending)  
+
+### General
+- Verified app runs without crashes  
+- Verified navigation between screens works correctly
+
+--- 
+
+## Known Limitations  
+
+- Images are stored as URI strings only  
+- Monthly range uses fixed date format (01–31)  
+
+---
+
+## Final Notes  
+
+This implementation provides:
+
+- Media support for expenses  
+- Full monthly goal tracking system  
+- Integration between expenses and goals  
+- Real-time spending feedback  
+
+---
+
+## References  
+
+- Android Developers. (n.d.). Activity Result APIs.  
+  Available at: https://developer.android.com/training/basics/intents/result  
+  [Accessed: April 2026]
+
+- Android Developers. (n.d.). ViewModel overview.  
+  Available at: https://developer.android.com/topic/libraries/architecture/viewmodel  
+  [Accessed: April 2026]
+
+- Android Developers. (n.d.). Accessing data using Room.  
+  Available at: https://developer.android.com/training/data-storage/room/accessing-data  
+  [Accessed: April 2026]
 
 
 
