@@ -23,11 +23,14 @@ jobs:
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
 
+      - name: Fix gradlew line endings
+        run: sed -i 's/\r$//' gradlew
+
       - name: Make gradlew executable
         run: chmod +x gradlew
 
       - name: Build project
-        run: ./gradlew build
+        run: bash ./gradlew build
 
       - name: Run unit tests
-        run: ./gradlew test
+        run: bash ./gradlew test
