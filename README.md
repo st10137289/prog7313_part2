@@ -664,7 +664,178 @@ This implementation provides:
 
 
 
+# PROG7313 POE – Part 2 (List + Reports)
 
+---
+
+## Author
+Rahil Ramdass (ST10434494)
+
+---
+
+## Overview
+
+This section covers the **List and Reports** functionality for the BudgetQuest application.
+
+The database queries and screen skeletons were already prepared by previous members, so this part focused on completing the user-facing reporting screens and connecting them to the existing Room database structure.
+
+The aim of this section was to allow users to view stored expenses for a selected period and to summarise their spending by category.
+
+---
+
+## Features Implemented
+
+### Expense List
+
+Users can view all saved expenses for a selected date range.
+
+**Functionality:**
+- Allows the user to select a **from date** and **to date**
+- Loads expenses using `ExpenseDao.getExpensesByPeriod(userId, startDate, endDate)`
+- Displays stored expense entries in a scrollable list
+- Shows the following details for each expense:
+  - Amount
+  - Date
+  - Start time and end time
+  - Description
+  - Category name
+- Indicates when a receipt image is attached
+
+**How it works:**
+- Dates are selected using `DatePickerDialog`
+- The selected dates are stored in `YYYY-MM-DD` format
+- Expenses are retrieved from the Room database for the logged-in user only
+- Category names are loaded using `CategoryDao.getCategoriesByUser(userId)` so that category IDs can be displayed as readable names
+
+---
+
+### Category Totals Report
+
+Users can view total spending per category for a selected date range.
+
+**Functionality:**
+- Allows the user to select a **from date** and **to date**
+- Calculates the total spent in each category for that period
+- Displays an **overall total**
+- Displays category totals in a scrollable list
+- Sorts totals from highest to lowest
+
+**How it works:**
+- Loads the user’s categories from `CategoryDao`
+- Uses `ExpenseDao.getTotalForCategoryByPeriod(userId, categoryId, startDate, endDate)` to calculate totals per category
+- Uses `ExpenseDao.getTotalSpentByPeriod(userId, startDate, endDate)` to calculate the overall total
+- Only categories with spending in the selected period are shown
+
+---
+
+## Screens Completed
+
+### ExpenseListScreen
+
+This screen was completed to provide a full expense viewing feature.
+
+**Features:**
+- Date range filtering
+- Automatic loading of expenses for the selected period
+- Expense cards showing the stored details clearly
+- Empty-state message when no expenses exist for the selected period
+- Back button to return to the home screen
+
+---
+
+### CategoryTotalsScreen
+
+This screen was completed to provide spending summaries by category.
+
+**Features:**
+- Date range filtering
+- Overall total display
+- Individual totals per category
+- Empty-state message when no data exists for the selected period
+- Back button to return to the home screen
+
+---
+
+## Integration
+
+The List and Reports section was integrated into the existing application flow.
+
+**Integration completed:**
+- Connected `ExpenseListScreen` to the Home screen through the **View Expenses** button
+- Connected `CategoryTotalsScreen` to the Home screen through the **Category Totals** button
+- Used the active logged-in user session so that each user only sees their own expenses and totals
+- Worked with the existing Room database and DAO layer without requiring database redesign
+
+---
+
+## Validation and Behaviour
+
+The following checks and behaviours were implemented:
+
+- Both dates must be selected before data is loaded
+- The **from date** cannot be after the **to date**
+- If there are no expenses for the selected range, a clear message is displayed
+- If there is no spending data for the selected range, a clear message is displayed
+- Totals are formatted clearly for readability
+
+---
+
+## Testing
+
+The following tests were performed to verify the feature:
+
+### Expense List
+- Verified that saved expenses appear for the correct date range
+- Verified that expenses do not appear outside the selected period
+- Verified that category names display correctly
+- Verified that receipt image presence is indicated correctly
+- Verified that the empty-state message appears when no expenses are found
+
+### Category Totals
+- Verified that totals are calculated correctly per category
+- Verified that the overall total matches the sum of category totals
+- Verified that only categories with spending are shown
+- Verified that the empty-state message appears when no spending exists for the selected period
+
+### Navigation
+- Verified that both report screens open correctly from the Home screen
+- Verified that the Back button returns the user to the Home screen
+
+---
+
+## Final Notes
+
+This implementation provides:
+
+- A complete expense viewing screen
+- Date-range filtering for stored expenses
+- Category-based spending summaries
+- Overall spending totals for selected periods
+- Integration of reporting features into the existing application flow
+
+---
+
+## References
+
+- Android Developers. (n.d.). Build a UI with Jetpack Compose.  
+  Available at: https://developer.android.com/compose  
+  [Accessed: 21 April 2026].
+
+- Android Developers. (n.d.). Lists and grids in Compose.  
+  Available at: https://developer.android.com/develop/ui/compose/lists  
+  [Accessed: 21 April 2026].
+
+- Android Developers. (n.d.). DatePickerDialog.  
+  Available at: https://developer.android.com/reference/android/app/DatePickerDialog  
+  [Accessed: 21 April 2026].
+
+- Android Developers. (n.d.). Accessing data using Room.  
+  Available at: https://developer.android.com/training/data-storage/room/accessing-data  
+  [Accessed: 21 April 2026].
+
+- Kotlin. (n.d.). Coroutines basics.  
+  Available at: https://kotlinlang.org/docs/coroutines-basics.html  
+  [Accessed: 21 April 2026].
 
 
 
