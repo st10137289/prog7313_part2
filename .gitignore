@@ -13,3 +13,7 @@
 .externalNativeBuild
 .cxx
 local.properties
+.vs/
+.idea/
+app/.vs/
+app/src/main/java/com/programming3c/.vs/
